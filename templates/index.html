@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dropout Predictor | Early Warning System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+        --card-border-radius: 14px;
+      }
+      body {
+        background-color: #f8fafc;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        color: #1e293b;
+      }
+      .hero-banner {
+        background: var(--primary-gradient);
+        color: #ffffff;
+        padding: 2.5rem 1rem;
+        margin-bottom: 2rem;
+        border-radius: 0 0 24px 24px;
+        box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.25);
+      }
+      .nav-pills .nav-link {
+        border-radius: 10px;
+        font-weight: 600;
+        padding: 0.65rem 1.5rem;
+        color: #475569;
+      }
+      .nav-pills .nav-link.active {
+        background-color: #4f46e5;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+      }
+      .card-custom {
+        border: 1px solid #e2e8f0;
+        border-radius: var(--card-border-radius);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        background: #ffffff;
+      }
+      .form-section-title {
+        font-size: 0.88rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .dropzone-box {
+        border: 2px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 3rem 1.5rem;
+        text-align: center;
+        background: #f8fafc;
+        transition: all 0.2s ease-in-out;
+        cursor: pointer;
+      }
+      .dropzone-box:hover {
+        border-color: #4f46e5;
+        background: #f1f5f9;
+      }
+      .badge-risk-high {
+        background-color: #ef4444;
+        color: #fff;
+      }
+      .badge-risk-medium {
+        background-color: #f59e0b;
+        color: #fff;
+      }
+      .badge-risk-low {
+        background-color: #10b981;
+        color: #fff;
+      }
+      .table-responsive {
+        max-height: 480px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header Banner -->
+    <header class="hero-banner">
+      <div
+        class="container d-flex flex-wrap justify-content-between align-items-center gap-3"
+      >
+        <div class="text-start">
+          <h1 class="fw-bold mb-1">
+            <i class="bi bi-mortarboard-fill me-2"></i>Student Retention AI
+            Predictor
+          </h1>
+          <p class="mb-0 text-white-50">
+            Machine Learning Early Warning System for Academic Performance &
+            Dropout Prevention
+          </p>
+        </div>
+        <div>
+          <a href="/guide" class="btn btn-light px-3 shadow-sm fw-semibold">
+            <i class="bi bi-book-half text-primary me-2"></i>Feature Guide &
+            Sample Data
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container pb-5">
+      <!-- Flash Alert Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="alert alert-{{ category }} alert-dismissible fade show shadow-sm"
+        role="alert"
+      >
+        <i class="bi bi-info-circle-fill me-2"></i>{{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <!-- Navigation Tabs -->
+      <div class="d-flex justify-content-center mb-4">
+        <ul
+          class="nav nav-pills bg-white p-1 rounded-3 shadow-sm border"
+          id="predictionTab"
+          role="tablist"
+        >
+          <li class="nav-item">
+            <button
+              class="nav-link {% if active_tab == 'single' %}active{% endif %}"
+              id="single-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#single-pane"
+              type="button"
+            >
+              <i class="bi bi-person-fill me-2"></i>Single Student
+            </button>
+          </li>
+          <li class="nav-item">
+            <button
+              class="nav-link {% if active_tab == 'batch' %}active{% endif %}"
+              id="batch-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#batch-pane"
+              type="button"
+            >
+              <i class="bi bi-file-earmark-spreadsheet-fill me-2"></i>Batch CSV
+              Upload
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-content">
+        <!-- ================= TAB 1: SINGLE ASSESSMENT ================= -->
+        <div
+          class="tab-pane fade {% if active_tab == 'single' %}show active{% endif %}"
+          id="single-pane"
+        >
+          <!-- Single Result Card if Available -->
+          {% if single_result %}
+          <div
+            class="card card-custom border-{{ single_result.badge_class }} mb-4 p-4 shadow"
+          >
+            <div class="row align-items-center">
+              <div class="col-md-8">
+                <span
+                  class="badge bg-{{ single_result.badge_class }} fs-6 mb-2"
+                >
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i>{{
+                  single_result.status }}
+                </span>
+                <h3 class="fw-bold mb-1">
+                  Estimated Risk Probability: {{ single_result.risk_score }}%
+                </h3>
+                <p class="text-muted mb-0">
+                  {% if single_result.is_dropout %} This student demonstrates
+                  high academic or behavioral risk indicators. Early counseling
+                  and faculty intervention recommended. {% else %} Student
+                  metrics reflect positive academic stability and consistent
+                  progress. {% endif %}
+                </p>
+              </div>
+              <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <div class="progress" style="height: 22px">
+                  <div
+                    class="progress-bar bg-{{ single_result.badge_class }} progress-bar-striped progress-bar-animated"
+                    role="progressbar"
+                    style="width: {{ single_result.risk_score }}%;"
+                  >
+                    {{ single_result.risk_score }}%
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <!-- Form Card -->
+          <div class="card card-custom p-4">
+            <form method="POST" action="/">
+              <input type="hidden" name="form_type" value="single" />
+
+              <!-- Section 1: Demographics -->
+              <div class="form-section-title">
+                <i class="bi bi-person-badge"></i> Demographics & Background
+              </div>
+              <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">Age</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    name="Age"
+                    class="form-control"
+                    value="{{ single_result.inputs.Age if single_result else '21' }}"
+                    required
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">Gender</label>
+                  <select name="Gender" class="form-select">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold"
+                    >Family Income (₹ / $)</label
+                  >
+                  <input
+                    type="number"
+                    step="100"
+                    name="Family_Income"
+                    class="form-control"
+                    value="{{ single_result.inputs.Family_Income if single_result else '38000' }}"
+                    required
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">Internet Access</label>
+                  <select name="Internet_Access" class="form-select">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Section 2: Academic Standing -->
+              <div class="form-section-title">
+                <i class="bi bi-mortarboard"></i> Academic Standing
+              </div>
+              <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">Semester / Year</label>
+                  <select name="Semester" class="form-select">
+                    <option value="Year 1">Year 1</option>
+                    <option value="Year 2">Year 2</option>
+                    <option value="Year 3">Year 3</option>
+                    <option value="Year 4">Year 4</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-semibold">Department</label>
+                  <select name="Department" class="form-select">
+                    <option value="CS">CS</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Arts">Arts</option>
+                    <option value="Business">Business</option>
+                    <option value="Science">Science</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Cumulative GPA</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="4.0"
+                    name="GPA"
+                    class="form-control"
+                    value="{{ single_result.inputs.GPA if single_result else '2.30' }}"
+                    required
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Semester GPA</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="4.0"
+                    name="Semester_GPA"
+                    class="form-control"
+                    value="{{ single_result.inputs.Semester_GPA if single_result else '2.30' }}"
+                    required
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">CGPA</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="4.0"
+                    name="CGPA"
+                    class="form-control"
+                    value="{{ single_result.inputs.CGPA if single_result else '2.30' }}"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- Section 3: Lifestyle & Study Habits -->
+              <div class="form-section-title">
+                <i class="bi bi-clock-history"></i> Engagement & External
+                Pressures
+              </div>
+              <div class="row g-3 mb-4">
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Study Hours/Day</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="24"
+                    name="Study_Hours_per_Day"
+                    class="form-control"
+                    value="{{ single_result.inputs.Study_Hours_per_Day if single_result else '4.0' }}"
+                    required
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Attendance (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    name="Attendance_Rate"
+                    class="form-control"
+                    value="{{ single_result.inputs.Attendance_Rate if single_result else '82.0' }}"
+                    required
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold"
+                    >Assignment Delay (Days)</label
+                  >
+                  <input
+                    type="number"
+                    step="1"
+                    min="0"
+                    max="30"
+                    name="Assignment_Delay_Days"
+                    class="form-control"
+                    value="{{ single_result.inputs.Assignment_Delay_Days if single_result else '1' }}"
+                    required
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold"
+                    >Travel Time (Min)</label
+                  >
+                  <input
+                    type="number"
+                    step="1"
+                    min="0"
+                    name="Travel_Time_Minutes"
+                    class="form-control"
+                    value="{{ single_result.inputs.Travel_Time_Minutes if single_result else '30' }}"
+                    required
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold"
+                    >Stress Index (1-10)</label
+                  >
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="1"
+                    max="10"
+                    name="Stress_Index"
+                    class="form-control"
+                    value="{{ single_result.inputs.Stress_Index if single_result else '5.5' }}"
+                    required
+                  />
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Part Time Job?</label>
+                  <select name="Part_Time_Job" class="form-select">
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <label class="form-label fw-semibold">Scholarship?</label>
+                  <select name="Scholarship" class="form-select">
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="text-end">
+                <button
+                  type="submit"
+                  class="btn btn-primary btn-lg px-5 shadow-sm"
+                >
+                  <i class="bi bi-cpu-fill me-2"></i>Analyze Student Risk
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- ================= TAB 2: BATCH CSV UPLOAD ================= -->
+        <div
+          class="tab-pane fade {% if active_tab == 'batch' %}show active{% endif %}"
+          id="batch-pane"
+        >
+          <div class="card card-custom p-4 mb-4">
+            <form method="POST" action="/" enctype="multipart/form-data">
+              <input type="hidden" name="form_type" value="batch" />
+
+              <div
+                class="dropzone-box"
+                onclick="document.getElementById('csv_file').click()"
+              >
+                <i class="bi bi-cloud-arrow-up display-4 text-primary mb-2"></i>
+                <h5>Upload Student Cohort CSV</h5>
+                <p class="text-muted small mb-3">
+                  Upload your CSV with the same columns as your training dataset
+                </p>
+                <input
+                  type="file"
+                  id="csv_file"
+                  name="csv_file"
+                  class="form-control d-none"
+                  accept=".csv"
+                  onchange="updateFileName(this)"
+                  required
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-sm px-4"
+                >
+                  Browse File
+                </button>
+                <div
+                  id="file-name-display"
+                  class="mt-2 fw-semibold text-success"
+                ></div>
+              </div>
+
+              <div class="text-end mt-3">
+                <button type="submit" class="btn btn-primary px-4 shadow-sm">
+                  <i class="bi bi-lightning-charge-fill me-1"></i>Process Batch
+                  Predictions
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Batch Results Display -->
+          {% if batch_results %}
+          <div class="card card-custom p-4 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h5 class="fw-bold mb-0">
+                  Cohort Results Preview (Top 50 Rows)
+                </h5>
+                <small class="text-muted"
+                  >Total records: {{ batch_results.total_rows }} | High risk
+                  students flagged: {{ batch_results.high_risk_count }}</small
+                >
+              </div>
+              <a href="/download-predictions" class="btn btn-success shadow-sm">
+                <i class="bi bi-download me-1"></i>Download Full CSV with
+                Predictions
+              </a>
+            </div>
+
+            <div class="table-responsive">
+              <table
+                class="table table-hover table-striped align-middle border text-nowrap small"
+              >
+                <thead class="table-dark">
+                  <tr>
+                    <th>Status</th>
+                    <th>Probability</th>
+                    <th>Risk Level</th>
+                    {% for col in batch_results.columns %} {% if col not in
+                    ['Dropout_Prediction', 'Dropout_Probability (%)',
+                    'Risk_Level'] %}
+                    <th>{{ col }}</th>
+                    {% endif %} {% endfor %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for row in batch_results.rows %}
+                  <tr>
+                    <td>
+                      {% if row['Dropout_Prediction'] == 'Likely Dropout' %}
+                      <span class="badge badge-risk-high">Dropout</span>
+                      {% else %}
+                      <span class="badge badge-risk-low">Retained</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <strong>{{ row['Dropout_Probability (%)'] }}%</strong>
+                    </td>
+                    <td>
+                      <span
+                        class="badge {% if row['Risk_Level'] == 'High' %}badge-risk-high{% elif row['Risk_Level'] == 'Medium' %}badge-risk-medium{% else %}badge-risk-low{% endif %}"
+                      >
+                        {{ row['Risk_Level'] }}
+                      </span>
+                    </td>
+                    {% for col in batch_results.columns %} {% if col not in
+                    ['Dropout_Prediction', 'Dropout_Probability (%)',
+                    'Risk_Level'] %}
+                    <td>{{ row[col] }}</td>
+                    {% endif %} {% endfor %}
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      function updateFileName(input) {
+          const display = document.getElementById('file-name-display');
+          if (input.files && input.files.length > 0) {
+              display.innerText = "Selected: " + input.files[0].name;
+          }
+      }
+
+      // Restore form selections safely without inline Jinja interference
+      {% if single_result and single_result.inputs %}
+      try {
+          document.querySelector("select[name='Gender']").value = "{{ single_result.inputs.Gender }}";
+          document.querySelector("select[name='Internet_Access']").value = "{{ single_result.inputs.Internet_Access }}";
+          document.querySelector("select[name='Semester']").value = "{{ single_result.inputs.Semester }}";
+          document.querySelector("select[name='Department']").value = "{{ single_result.inputs.Department }}";
+          document.querySelector("select[name='Part_Time_Job']").value = "{{ single_result.inputs.Part_Time_Job }}";
+          document.querySelector("select[name='Scholarship']").value = "{{ single_result.inputs.Scholarship }}";
+      } catch (e) {
+          console.log("Form values restored");
+      }
+      {% endif %}
+    </script>
+  </body>
+</html>

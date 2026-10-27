@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dataset & Feature Guide | Student Retention AI</title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      }
+      body {
+        background-color: #f8fafc;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        color: #1e293b;
+      }
+      .header-banner {
+        background: var(--primary-gradient);
+        color: #ffffff;
+        padding: 2.2rem 1rem;
+        margin-bottom: 2rem;
+        border-radius: 0 0 24px 24px;
+        box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.25);
+      }
+      .card-custom {
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        background: #ffffff;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
+      .feature-card {
+        border-left: 4px solid #4f46e5;
+        transition: transform 0.15s ease-in-out;
+      }
+      .feature-card:hover {
+        transform: translateY(-2px);
+      }
+      .badge-type-num {
+        background-color: #e0e7ff;
+        color: #3730a3;
+      }
+      .badge-type-cat {
+        background-color: #dcfce7;
+        color: #166534;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header Banner -->
+    <header class="header-banner">
+      <div
+        class="container d-flex flex-wrap justify-content-between align-items-center gap-3"
+      >
+        <div>
+          <h1 class="h3 fw-bold mb-1">
+            <i class="bi bi-book-half me-2"></i>Dataset Feature Specification &
+            Guide
+          </h1>
+          <p class="mb-0 text-white-50">
+            Detailed schema, ranges, data types, and example records for student
+            prediction.
+          </p>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="/" class="btn btn-light px-3 shadow-sm">
+            <i class="bi bi-arrow-left me-1"></i>Back to Predictor
+          </a>
+          <a
+            href="/download-sample"
+            class="btn btn-outline-light px-3 shadow-sm"
+          >
+            <i class="bi bi-download me-1"></i>Download Sample CSV
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container pb-5">
+      <!-- Overview Card -->
+      <div class="card card-custom p-4 mb-4">
+        <h5 class="fw-bold mb-2">
+          <i class="bi bi-info-circle-fill text-primary me-2"></i>How the AI
+          Model Processes Features
+        </h5>
+        <p class="text-muted mb-0">
+          The prediction engine analyzes
+          <strong>16 baseline features</strong> spanning demographics, academic
+          performance, and external pressures. It automatically derives
+          high-level behavioral indicators (such as
+          <em>Attendance Disruption</em>, <em>Academic Risk Index</em>, and
+          <em>GPA Trajectory</em>) before computing dropout probability.
+        </p>
+      </div>
+
+      <!-- Section 1: Demographics -->
+      <h5 class="fw-bold text-secondary mb-3">
+        <i class="bi bi-person-badge me-2"></i>1. Demographics & Background
+      </h5>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Age</code>
+              <span class="badge badge-type-num">Numeric</span>
+            </div>
+            <p class="small text-muted mb-2">Student's age in years.</p>
+            <div class="small"><strong>Valid Range:</strong> 17.0 – 35.0</div>
+            <div class="small text-success"><strong>Example:</strong> 21.0</div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Gender</code>
+              <span class="badge badge-type-cat">Categorical</span>
+            </div>
+            <p class="small text-muted mb-2">Gender identity of the student.</p>
+            <div class="small">
+              <strong>Valid Values:</strong> <code>Male</code>,
+              <code>Female</code>
+            </div>
+            <div class="small text-success"><strong>Example:</strong> Male</div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Family_Income</code>
+              <span class="badge badge-type-num">Numeric</span>
+            </div>
+            <p class="small text-muted mb-2">
+              Total annual / household income.
+            </p>
+            <div class="small">
+              <strong>Valid Range:</strong> 25,000 – 350,000+
+            </div>
+            <div class="small text-success">
+              <strong>Example:</strong> 38000
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Internet_Access</code>
+              <span class="badge badge-type-cat">Categorical</span>
+            </div>
+            <p class="small text-muted mb-2">
+              Access to high-speed home internet.
+            </p>
+            <div class="small">
+              <strong>Valid Values:</strong> <code>Yes</code>, <code>No</code>
+            </div>
+            <div class="small text-success"><strong>Example:</strong> Yes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Academics -->
+      <h5 class="fw-bold text-secondary mb-3">
+        <i class="bi bi-mortarboard me-2"></i>2. Academic Performance
+      </h5>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6"
+                >GPA / Semester_GPA / CGPA</code
+              >
+              <span class="badge badge-type-num">Numeric (0-4.0)</span>
+            </div>
+            <p class="small text-muted mb-2">
+              Cumulative GPA, current term GPA, and overall grade point
+              averages.
+            </p>
+            <div class="small"><strong>Valid Range:</strong> 0.00 – 4.00</div>
+            <div class="small text-success"><strong>Example:</strong> 2.85</div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Semester</code>
+              <span class="badge badge-type-cat">Categorical</span>
+            </div>
+            <p class="small text-muted mb-2">
+              Current enrolled year / academic stage.
+            </p>
+            <div class="small">
+              <strong>Valid Values:</strong> <code>Year 1</code>,
+              <code>Year 2</code>, <code>Year 3</code>, <code>Year 4</code>
+            </div>
+            <div class="small text-success">
+              <strong>Example:</strong> Year 2
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Department</code>
+              <span class="badge badge-type-cat">Categorical</span>
+            </div>
+            <p class="small text-muted mb-2">Enrolled faculty or discipline.</p>
+            <div class="small">
+              <strong>Valid Values:</strong> <code>CS</code>,
+              <code>Engineering</code>, <code>Arts</code>,
+              <code>Business</code>, <code>Science</code>
+            </div>
+            <div class="small text-success"><strong>Example:</strong> CS</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Engagement & External Pressures -->
+      <h5 class="fw-bold text-secondary mb-3">
+        <i class="bi bi-clock-history me-2"></i>3. Engagement & External
+        Pressures
+      </h5>
+      <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Attendance_Rate</code>
+              <span class="badge badge-type-num">Numeric (%)</span>
+            </div>
+            <p class="small text-muted mb-2">Percentage of class attendance.</p>
+            <div class="small"><strong>Valid Range:</strong> 0.0 – 100.0%</div>
+            <div class="small text-success"><strong>Example:</strong> 85.5</div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Study_Hours_per_Day</code>
+              <span class="badge badge-type-num">Numeric</span>
+            </div>
+            <p class="small text-muted mb-2">Self-study hours per day.</p>
+            <div class="small">
+              <strong>Valid Range:</strong> 0.5 – 12.0 hrs
+            </div>
+            <div class="small text-success"><strong>Example:</strong> 4.0</div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6"
+                >Assignment_Delay_Days</code
+              >
+              <span class="badge badge-type-num">Numeric</span>
+            </div>
+            <p class="small text-muted mb-2">
+              Average days late in assignment turn-ins.
+            </p>
+            <div class="small"><strong>Valid Range:</strong> 0 – 30 days</div>
+            <div class="small text-success"><strong>Example:</strong> 1</div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Stress_Index</code>
+              <span class="badge badge-type-num">Scale (1-10)</span>
+            </div>
+            <p class="small text-muted mb-2">
+              Self-reported emotional/academic stress.
+            </p>
+            <div class="small"><strong>Valid Range:</strong> 1.0 – 10.0</div>
+            <div class="small text-success"><strong>Example:</strong> 5.5</div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Travel_Time_Minutes</code>
+              <span class="badge badge-type-num">Numeric</span>
+            </div>
+            <p class="small text-muted mb-2">
+              One-way transit time to university.
+            </p>
+            <div class="small"><strong>Valid Range:</strong> 5 – 120 mins</div>
+            <div class="small text-success"><strong>Example:</strong> 30</div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Part_Time_Job</code>
+              <span class="badge badge-type-cat">Categorical</span>
+            </div>
+            <p class="small text-muted mb-2">
+              Whether student works a job while studying.
+            </p>
+            <div class="small">
+              <strong>Valid Values:</strong> <code>Yes</code>, <code>No</code>
+            </div>
+            <div class="small text-success"><strong>Example:</strong> No</div>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="card card-custom feature-card p-3 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <code class="fw-bold text-primary fs-6">Scholarship</code>
+              <span class="badge badge-type-cat">Categorical</span>
+            </div>
+            <p class="small text-muted mb-2">
+              Whether student is on a scholarship.
+            </p>
+            <div class="small">
+              <strong>Valid Values:</strong> <code>Yes</code>, <code>No</code>
+            </div>
+            <div class="small text-success"><strong>Example:</strong> No</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample CSV Preview Table -->
+      <div class="card card-custom p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h5 class="fw-bold mb-0">
+              <i class="bi bi-table text-primary me-2"></i>Sample CSV Structure
+            </h5>
+            <small class="text-muted"
+              >A valid CSV file should look like this:</small
+            >
+          </div>
+          <a href="/download-sample" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-download me-1"></i>Download Template (.csv)
+          </a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered table-striped small text-nowrap">
+            <thead class="table-dark">
+              <tr>
+                <th>Student_ID</th>
+                <th>Age</th>
+                <th>Gender</th>
+                <th>Family_Income</th>
+                <th>Internet_Access</th>
+                <th>Study_Hours_per_Day</th>
+                <th>Attendance_Rate</th>
+                <th>Assignment_Delay_Days</th>
+                <th>Travel_Time_Minutes</th>
+                <th>Part_Time_Job</th>
+                <th>Scholarship</th>
+                <th>Stress_Index</th>
+                <th>GPA</th>
+                <th>Semester_GPA</th>
+                <th>CGPA</th>
+                <th>Semester</th>
+                <th>Department</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1001</td>
+                <td>20.5</td>
+                <td>Male</td>
+                <td>35000</td>
+                <td>Yes</td>
+                <td>5.0</td>
+                <td>92.0</td>
+                <td>0</td>
+                <td>25</td>
+                <td>No</td>
+                <td>Yes</td>
+                <td>3.5</td>
+                <td>3.40</td>
+                <td>3.50</td>
+                <td>3.45</td>
+                <td>Year 2</td>
+                <td>CS</td>
+              </tr>
+              <tr>
+                <td>1002</td>
+                <td>22.0</td>
+                <td>Female</td>
+                <td>28000</td>
+                <td>No</td>
+                <td>2.0</td>
+                <td>65.0</td>
+                <td>4</td>
+                <td>55</td>
+                <td>Yes</td>
+                <td>No</td>
+                <td>8.0</td>
+                <td>1.80</td>
+                <td>1.60</td>
+                <td>1.70</td>
+                <td>Year 3</td>
+                <td>Arts</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Bottom Action -->
+      <div class="text-center pt-2">
+        <a href="/" class="btn btn-primary btn-lg px-5 shadow-sm">
+          <i class="bi bi-arrow-left-circle-fill me-2"></i>Return to Prediction
+          Dashboard
+        </a>
+      </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
